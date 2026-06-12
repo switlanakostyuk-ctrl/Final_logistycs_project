@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Операційний дашборд доставки</title>
+<style>
+  :root{
+    --bg:#f6f8fb;--card:#ffffff;--card2:#f9fbfd;--text:#172033;--muted:#667085;--line:#d9e1ec;
+    --blue:#2563eb;--blue2:#dbeafe;--green:#16a34a;--green2:#dcfce7;--red:#dc2626;--red2:#fee2e2;
+    --orange:#f97316;--orange2:#ffedd5;--yellow:#ca8a04;--yellow2:#fef3c7;--purple:#7c3aed;--purple2:#ede9fe;
+    --slate:#475569;--shadow:0 10px 30px rgba(15,23,42,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
+  .wrap{max-width:1320px;margin:0 auto;padding:28px}
+  .hero{background:linear-gradient(135deg,#ffffff 0%,#eef5ff 55%,#e8fff0 100%);border:1px solid var(--line);border-radius:26px;padding:34px 38px;box-shadow:var(--shadow);margin-bottom:26px}
+  .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.6px;color:var(--blue);font-weight:800;margin-bottom:8px}
+  h1{font-size:34px;line-height:1.1;margin-bottom:14px;letter-spacing:-.7px}
+  .hero p{max-width:1050px;color:#344054;font-size:16px;margin-bottom:10px}
+  .hero strong{color:#0f172a}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:#344054;font-size:13px;font-weight:650}
+  .section{margin:26px 0}
+  .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:14px}
+  .section h2{font-size:22px;letter-spacing:-.3px}
+  .section-note{color:var(--muted);font-size:14px;max-width:760px}
+  .grid{display:grid;gap:16px}.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}.g23{grid-template-columns:2fr 3fr}.g32{grid-template-columns:3fr 2fr}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 6px 20px rgba(15,23,42,.05)}
+  .kpi{min-height:128px;position:relative;overflow:hidden}.kpi:before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--blue)}
+  .kpi.green:before{background:var(--green)}.kpi.red:before{background:var(--red)}.kpi.orange:before{background:var(--orange)}.kpi.purple:before{background:var(--purple)}
+  .kpi-label{font-size:13px;color:var(--muted);font-weight:750;margin-bottom:10px}.kpi-value{font-size:32px;font-weight:850;letter-spacing:-.8px;margin-bottom:5px}.kpi-sub{font-size:13px;color:var(--muted)}
+  .kpi-duo{display:grid;grid-template-columns:1fr 1fr;gap:12px;background:#fff5f5;border-color:#fecaca}.kpi-duo .mini{padding:8px 10px;border-radius:16px;background:#fff;border:1px solid #fecaca}.mini-label{font-size:13px;color:#7f1d1d;font-weight:800;margin-bottom:8px}.mini-val{font-size:28px;font-weight:850;color:var(--red);line-height:1}.mini-sub{margin-top:5px;font-size:13px;color:#7f1d1d}
+  .green-block{background:linear-gradient(135deg,#ecfdf3 0%,#f7fff9 100%);border-color:#bbf7d0}.green-block .kpi-value{color:var(--green)}
+  .city{position:relative;overflow:hidden}.city h3{font-size:20px;margin-bottom:12px}.city.good{border-top:5px solid var(--green)}.city.mid{border-top:5px solid var(--yellow)}.city.bad{border-top:5px solid var(--red)}
+  .stat-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #eef2f7;padding:9px 0}.stat-row:last-child{border-bottom:none}.stat-row span:first-child{color:var(--muted);font-size:14px}.stat-row span:last-child{font-weight:800;text-align:right}
+  .bar-row{display:grid;grid-template-columns:130px 1fr 120px;gap:12px;align-items:center;margin:13px 0}.bar-name{font-weight:750}.bar-track{height:28px;background:#eef2f7;border-radius:999px;overflow:hidden;position:relative}.bar{height:100%;border-radius:999px;display:flex;align-items:center;justify-content:flex-end;padding-right:12px;color:white;font-weight:850;font-size:13px}.bar.red{background:linear-gradient(90deg,#fb7185,#dc2626)}.bar.yellow{background:linear-gradient(90deg,#facc15,#ca8a04)}.bar.green{background:linear-gradient(90deg,#86efac,#16a34a)}.bar-num{text-align:right;color:var(--muted);font-weight:750;font-size:13px}
+  .insight{margin-top:14px;border-radius:18px;padding:14px 16px;background:#f8fafc;border:1px solid #e2e8f0;color:#475569;font-size:14px}.insight strong{color:#0f172a}
+  .risk-stack{display:grid;gap:10px}.risk-line{display:grid;grid-template-columns:170px 1fr 120px;gap:12px;align-items:center}.risk-title{font-weight:800}.risk-track{height:34px;background:#edf2f7;border-radius:12px;overflow:hidden}.risk-fill{height:100%;display:flex;align-items:center;justify-content:flex-end;padding-right:12px;color:white;font-weight:850;border-radius:12px}.risk-fill.blue{background:#3b82f6}.risk-fill.yellow{background:#f59e0b}.risk-fill.orange{background:#f97316}.risk-fill.red{background:#dc2626}.risk-val{font-weight:850;text-align:right}.muted{color:var(--muted)}
+  .combo{height:320px;border-radius:18px;background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%);border:1px solid #edf2f7;padding:18px;position:relative}.combo-grid{position:absolute;left:70px;right:42px;top:35px;bottom:58px;background:repeating-linear-gradient(to top,transparent 0,transparent 51px,#e5e7eb 52px)}
+  .combo-bars{position:absolute;left:90px;right:70px;bottom:58px;height:220px;display:flex;align-items:flex-end;justify-content:space-around}.combo-item{width:88px;text-align:center}.combo-bar{width:70px;margin:0 auto;border-radius:12px 12px 4px 4px;background:linear-gradient(180deg,#60a5fa,#2563eb);display:flex;align-items:flex-start;justify-content:center;color:white;font-weight:850;font-size:12px;padding-top:8px}.combo-label{margin-top:10px;font-size:13px;font-weight:750}.combo-line{position:absolute;left:128px;right:106px;top:54px;height:110px;pointer-events:none}.point{position:absolute;width:13px;height:13px;border-radius:50%;background:#dc2626;border:3px solid white;box-shadow:0 2px 8px rgba(220,38,38,.35)}.rate{position:absolute;font-size:13px;font-weight:850;color:#dc2626;background:#fff;border:1px solid #fecaca;border-radius:999px;padding:3px 7px}.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;color:var(--muted);font-size:13px}.legend i{display:inline-block;width:14px;height:10px;border-radius:999px;margin-right:6px}.legend .b{background:#2563eb}.legend .l{background:#dc2626;height:3px;vertical-align:middle}
+  table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:16px}th,td{padding:12px 14px;border-bottom:1px solid #edf2f7;text-align:left;font-size:14px}th{background:#f8fafc;color:#475569;text-transform:uppercase;font-size:12px;letter-spacing:.6px}td.num{font-weight:800;text-align:right}.pill{display:inline-block;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:850}.pill.red{background:var(--red2);color:#991b1b}.pill.yellow{background:var(--yellow2);color:#854d0e}.pill.green{background:var(--green2);color:#166534}
+  .donut-wrap{display:flex;align-items:center;gap:24px}.donut{width:190px;height:190px;border-radius:50%;background:conic-gradient(var(--red) 0 53.8%, var(--yellow) 53.8% 87.1%, var(--green) 87.1% 100%);position:relative;box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}.donut:after{content:"$626.7K";position:absolute;inset:42px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#172033;border:1px solid #e5e7eb}.donut-list{flex:1}.drow{display:grid;grid-template-columns:14px 1fr auto;gap:10px;align-items:center;margin:10px 0}.dot{width:13px;height:13px;border-radius:4px}.drow strong{font-weight:850}.drow .amount{font-weight:900}.opt-card{background:linear-gradient(135deg,#ecfdf3,#ffffff);border-color:#bbf7d0}.before-after{display:grid;gap:12px}.ba-row{display:grid;grid-template-columns:1.2fr .8fr .8fr .8fr;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid #dcfce7}.ba-row.head{font-weight:850;color:#166534;text-transform:uppercase;font-size:12px;letter-spacing:.5px}.ba-row:last-child{border-bottom:none}.ba-row div:not(:first-child){text-align:right;font-weight:850}.change{color:var(--green)}
+  .recommendations{background:#fff;border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow)}.rec-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:16px}.rec{background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:16px}.rec h3{font-size:16px;margin-bottom:8px}.rec p{font-size:14px;color:#475569}.conclusion{background:#eff6ff;border:1px solid #bfdbfe;border-radius:18px;padding:16px;color:#1e3a8a;margin-top:14px}
+  .footer{color:var(--muted);font-size:12px;text-align:center;padding:18px 0 6px}
+  @media(max-width:1000px){.g4,.g3,.g2,.g23,.g32{grid-template-columns:1fr}.bar-row,.risk-line{grid-template-columns:1fr}.bar-num,.risk-val{text-align:left}.donut-wrap{flex-direction:column;align-items:flex-start}.rec-grid{grid-template-columns:1fr}.wrap{padding:16px}.hero{padding:24px}h1{font-size:28px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Операційна аналітика доставок</div>
+    <h1>Дашборд ефективності last-mile доставки</h1>
+    <p>Компанія здійснює доставку у трьох великих містах Китаю: <strong>Шанхай, Ханчжоу та Чунцін</strong>. Мета аналізу — знайти основні джерела затримок, оцінити фінансові втрати та показати, де оптимізація процесу дає найбільший ефект.</p>
+    <p><strong>Ключовий сценарій:</strong> скорочення часу доставки на 15% зменшує кількість проблемних доставок на 24 461, дає економію близько <strong>$187 648</strong> та підвищує пропускну здатність системи на <strong>17,6%</strong>.</p>
+    <div class="chips"><span class="chip">465 384 доставки</span><span class="chip">1 847 кур'єрів</span><span class="chip">3 міста</span><span class="chip">норматив: до 180 хв</span><span class="chip">сценарій оптимізації: −15%</span></div>
+  </header>
+
+  <section class="section">
+    <div class="section-head"><div><h2>1. Основні показники</h2><p class="section-note">Перший блок показує масштаб роботи, рівень проблемних доставок і фінансовий потенціал оптимізації.</p></div></div>
+    <div class="grid g4">
+      <div class="card kpi"><div class="kpi-label">Загальна кількість доставок</div><div class="kpi-value">465 384</div><div class="kpi-sub">за аналізований період</div></div>
+      <div class="card kpi purple"><div class="kpi-label">Унікальні кур'єри</div><div class="kpi-value">1 847</div><div class="kpi-sub">у трьох містах</div></div>
+      <div class="card kpi orange"><div class="kpi-label">Середній час доставки</div><div class="kpi-value">132,8 хв</div><div class="kpi-sub">медіана: 92,0 хв</div></div>
+      <div class="card kpi"><div class="kpi-label">Оцінка втрат від затримок</div><div class="kpi-value">$626 739</div><div class="kpi-sub">за методикою розрахунку в аналізі</div></div>
+    </div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card kpi-duo">
+        <div class="mini"><div class="mini-label">Доставки понад 180 хв</div><div class="mini-val">20,6%</div><div class="mini-sub">96 043 проблемні доставки</div></div>
+        <div class="mini"><div class="mini-label">Критичні затримки</div><div class="mini-val">12,0%</div><div class="mini-sub">55 685 доставок понад 240 хв</div></div>
+      </div>
+      <div class="card green-block">
+        <div class="grid g2" style="gap:10px">
+          <div><div class="kpi-label">Економія після оптимізації</div><div class="kpi-value">$187 648</div><div class="kpi-sub">сценарій −15% часу доставки</div></div>
+          <div><div class="kpi-label">Пропускна здатність</div><div class="kpi-value">+17,6%</div><div class="kpi-sub">більше доставок за той самий час</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>2. Порівняння міст</h2><p class="section-note">Різниця між містами є головною лінією аналізу: Чунцін має найвищий час доставки, найвищу частку доставок понад 180 хвилин і найбільші фінансові втрати.</p></div></div>
+    <div class="grid g3">
+      <div class="card city bad"><h3>Чунцін</h3><div class="stat-row"><span>Кількість доставок</span><span>115 990</span></div><div class="stat-row"><span>Середній час</span><span>192,6 хв</span></div><div class="stat-row"><span>Доставки понад 180 хв</span><span style="color:var(--red)">37,4%</span></div><div class="stat-row"><span>Втрати від затримок</span><span style="color:var(--red)">$337 517</span></div></div>
+      <div class="card city mid"><h3>Ханчжоу</h3><div class="stat-row"><span>Кількість доставок</span><span>184 346</span></div><div class="stat-row"><span>Середній час</span><span>127,6 хв</span></div><div class="stat-row"><span>Доставки понад 180 хв</span><span style="color:var(--yellow)">19,2%</span></div><div class="stat-row"><span>Втрати від затримок</span><span style="color:var(--yellow)">$208 438</span></div></div>
+      <div class="card city good"><h3>Шанхай</h3><div class="stat-row"><span>Кількість доставок</span><span>165 048</span></div><div class="stat-row"><span>Середній час</span><span>96,5 хв</span></div><div class="stat-row"><span>Доставки понад 180 хв</span><span style="color:var(--green)">10,5%</span></div><div class="stat-row"><span>Втрати від затримок</span><span style="color:var(--green)">$80 784</span></div></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3 style="margin-bottom:10px">Частка доставок понад 180 хвилин</h3>
+      <div class="bar-row"><div class="bar-name" style="color:var(--red)">Чунцін</div><div class="bar-track"><div class="bar red" style="width:100%">37,4%</div></div><div class="bar-num">115 990 доставок</div></div>
+      <div class="bar-row"><div class="bar-name" style="color:var(--yellow)">Ханчжоу</div><div class="bar-track"><div class="bar yellow" style="width:51.3%">19,2%</div></div><div class="bar-num">184 346 доставок</div></div>
+      <div class="bar-row"><div class="bar-name" style="color:var(--green)">Шанхай</div><div class="bar-track"><div class="bar green" style="width:28.1%">10,5%</div></div><div class="bar-num">165 048 доставок</div></div>
+      <div class="insight"><strong>Чунцін — головна зона для оптимізації:</strong> частка проблемних доставок у цьому місті у 3,6 раза вища, ніж у Шанхаї, а сума втрат від затримок становить понад половину всіх втрат.</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>3. Структура тривалості доставок</h2><p class="section-note">Блок розділяє доставки на нормальні, ризикові, проблемні та критичні. Найбільший практичний інтерес має зона 120–180 хвилин: ці доставки ще в межах нормативу, але вже близькі до порушення.</p></div></div>
+    <div class="card">
+      <div class="risk-stack">
+        <div class="risk-line"><div class="risk-title">До 120 хв</div><div class="risk-track"><div class="risk-fill blue" style="width:100%">291 717</div></div><div class="risk-val">62,7%</div></div>
+        <div class="risk-line"><div class="risk-title" style="color:var(--yellow)">120–180 хв</div><div class="risk-track"><div class="risk-fill yellow" style="width:26.6%">77 624</div></div><div class="risk-val">16,7%</div></div>
+        <div class="risk-line"><div class="risk-title" style="color:var(--orange)">180–240 хв</div><div class="risk-track"><div class="risk-fill orange" style="width:13.8%">40 358</div></div><div class="risk-val">8,7%</div></div>
+        <div class="risk-line"><div class="risk-title" style="color:var(--red)">Понад 240 хв</div><div class="risk-track"><div class="risk-fill red" style="width:19.1%">55 685</div></div><div class="risk-val">12,0%</div></div>
+      </div>
+      <div class="insight"><strong>Практичний висновок:</strong> 77 624 доставки перебувають у зоні ризику. Навіть невелике скорочення часу для цієї групи може помітно покращити загальний рівень виконання нормативу.</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>4. Навантаження протягом дня</h2><p class="section-note">Комбінований графік поєднує обсяг доставок і частку проблемних доставок. Це дозволяє бачити не лише коли замовлень багато, а й коли якість доставки погіршується.</p></div></div>
+    <div class="grid g23">
+      <div class="card">
+        <h3 style="margin-bottom:12px">Доставки та частка перевищення нормативу</h3>
+        <div class="combo">
+          <div class="combo-grid"></div>
+          <svg class="combo-line" viewBox="0 0 420 120" preserveAspectRatio="none">
+            <polyline points="22,10 210,82 392,112" fill="none" stroke="#dc2626" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="point" style="left:112px;top:49px"></div><div class="rate" style="left:90px;top:21px">28,1%</div>
+          <div class="point" style="left:298px;top:119px"></div><div class="rate" style="left:276px;top:91px">10,8%</div>
+          <div class="point" style="right:88px;top:149px"></div><div class="rate" style="right:60px;top:164px">3,1%</div>
+          <div class="combo-bars">
+            <div class="combo-item"><div class="combo-bar" style="height:220px">267 384</div><div class="combo-label">06–12</div></div>
+            <div class="combo-item"><div class="combo-bar" style="height:159px">193 031</div><div class="combo-label">12–18</div></div>
+            <div class="combo-item"><div class="combo-bar" style="height:26px">4 969</div><div class="combo-label">18–24</div></div>
+          </div>
+        </div>
+        <div class="legend"><span><i class="b"></i>кількість доставок</span><span><i class="l"></i>частка доставок понад 180 хв</span></div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:12px">Показники за періодами дня</h3>
+        <table>
+          <thead><tr><th>Період</th><th>Доставки</th><th>Проблемні</th><th>Частка</th><th>Сер. час</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Ранок 06–12</strong></td><td class="num">267 384</td><td class="num">75 105</td><td><span class="pill red">28,1%</span></td><td class="num">148,9 хв</td></tr>
+            <tr><td><strong>День 12–18</strong></td><td class="num">193 031</td><td class="num">20 786</td><td><span class="pill yellow">10,8%</span></td><td class="num">96,3 хв</td></tr>
+            <tr><td><strong>Вечір 18–24</strong></td><td class="num">4 969</td><td class="num">152</td><td><span class="pill green">3,1%</span></td><td class="num">42,2 хв</td></tr>
+          </tbody>
+        </table>
+        <div class="insight"><strong>Ранковий період створює найбільше навантаження:</strong> саме на 06–12 припадає основна кількість проблемних доставок. Для цього вікна варто перевіряти доступність кур'єрів, маршрути та правила розподілу замовлень.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>5. Фінансовий вплив затримок</h2><p class="section-note">Фінансовий блок показує не просто суму втрат, а те, де саме вони концентруються. Найбільший внесок у втрати має Чунцін.</p></div></div>
+    <div class="grid g32">
+      <div class="card">
+        <h3 style="margin-bottom:12px">Структура втрат за містами</h3>
+        <div class="donut-wrap">
+          <div class="donut"></div>
+          <div class="donut-list">
+            <div class="drow"><span class="dot" style="background:var(--red)"></span><strong>Чунцін</strong><span class="amount" style="color:var(--red)">$337 517 · 53,8%</span></div>
+            <div class="drow"><span class="dot" style="background:var(--yellow)"></span><strong>Ханчжоу</strong><span class="amount" style="color:var(--yellow)">$208 438 · 33,3%</span></div>
+            <div class="drow"><span class="dot" style="background:var(--green)"></span><strong>Шанхай</strong><span class="amount" style="color:var(--green)">$80 784 · 12,9%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:12px">Аналітичний сенс</h3>
+        <p class="muted" style="font-size:15px;margin-bottom:12px">Загальна оцінка втрат від затримок становить <strong style="color:#172033">$626 739</strong>. Більше половини цієї суми припадає на Чунцін, тому оптимізація саме цього міста має найбільший потенціал для скорочення витрат.</p>
+        <div class="insight"><strong>Фокус для управління:</strong> якщо ресурси на покращення обмежені, їх логічно спрямувати не рівномірно на всі міста, а насамперед у Чунцін.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>6. Сценарій оптимізації: −15% часу доставки</h2><p class="section-note">Цей блок показує, як помірне скорочення часу доставки впливає не лише на середній час, а й на кількість проблемних замовлень, критичні затримки, витрати та пропускну здатність.</p></div></div>
+    <div class="card opt-card">
+      <div class="before-after">
+        <div class="ba-row head"><div>Показник</div><div>Було</div><div>Стало</div><div>Зміна</div></div>
+        <div class="ba-row"><div>Середній час доставки</div><div>132,76 хв</div><div>112,85 хв</div><div class="change">−19,91 хв</div></div>
+        <div class="ba-row"><div>Середня вартість доставки</div><div>$5,53</div><div>$4,70</div><div class="change">−$0,83</div></div>
+        <div class="ba-row"><div>Проблемні доставки понад 180 хв</div><div>96 043</div><div>71 582</div><div class="change">−24 461</div></div>
+        <div class="ba-row"><div>Критичні доставки понад 240 хв</div><div>55 685</div><div>41 585</div><div class="change">−14 100</div></div>
+        <div class="ba-row"><div>Втрати від затримок</div><div>$626 739</div><div>$439 091</div><div class="change">−$187 648</div></div>
+        <div class="ba-row"><div>Пропускна здатність</div><div>0,452</div><div>0,532</div><div class="change">+17,6%</div></div>
+      </div>
+      <div class="insight"><strong>Головний результат:</strong> скорочення часу на 15% дає непропорційно сильний ефект для проблемних доставок: їх кількість зменшується на 25,5%, а фінансові втрати — майже на 30%.</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="recommendations">
+      <h2>7. Висновки та рекомендації</h2>
+      <div class="conclusion">Основна проблема не розподілена рівномірно між усіма містами. Найбільша концентрація затримок і фінансових втрат знаходиться у Чунціні, тоді як Шанхай працює значно стабільніше. Тому найсильніший ефект дасть не загальне покращення всієї системи одразу, а точкова оптимізація проблемних зон.</div>
+      <div class="rec-grid">
+        <div class="rec"><h3>1. Почати з Чунціна</h3><p>Саме це місто має найвищу частку доставок понад 180 хвилин і формує понад половину фінансових втрат. Варто перевірити маршрути, щільність кур'єрів, логіку диспетчеризації та причини довгих доставок у цьому місті.</p></div>
+        <div class="rec"><h3>2. Посилити контроль у ранковий період</h3><p>З 06:00 до 12:00 система має найбільшу кількість проблемних доставок. Для цього періоду доцільно збільшувати доступність кур'єрів, швидше розподіляти замовлення та контролювати пікове навантаження.</p></div>
+        <div class="rec"><h3>3. Працювати із зоною 120–180 хвилин</h3><p>Це група доставок, які ще не перевищили норматив, але вже близькі до проблемного рівня. Невелике скорочення часу саме тут може швидко покращити загальний результат.</p></div>
+        <div class="rec"><h3>4. Використовувати сценарій −15% як реалістичну ціль</h3><p>Модель показує, що таке покращення може зменшити кількість проблемних доставок на 24 461, скоротити критичні затримки на 14 100 і підвищити пропускну здатність на 17,6%.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">Операційний дашборд доставки · українська версія · без технічних назв колонок і без синтетичних показників</div>
+</div>
+</body>
+</html>
